@@ -1,0 +1,42 @@
+﻿@model AquariumForum_2.Models.Comment
+
+@{
+    ViewData["Title"] = "Create Comment";
+}
+
+<h1>Create Comment</h1>
+
+<h4>Comment</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateComment" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+
+            <!-- Hidden field for DiscussionId -->
+            <input type="hidden" asp-for="DiscussionId" value="@ViewBag.DiscussionId" />
+
+            <br />
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetDiscussion" asp-route-id="@ViewBag.DiscussionId">Back to Discussion</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,108 @@
+﻿@model AquariumForum_2.Models.Discussion
+
+@{
+    ViewData["Title"] = "Discussion Details";
+}
+
+<h1>@Html.DisplayFor(model => model.Title)</h1>
+
+<div>
+    <hr />
+    <!-- Display Image if it exists -->
+    @if (!string.IsNullOrEmpty(Model.ImageFilename))
+    {
+        <dd class="col-sm-10">
+            @* <img src="~/images/@Model.ImageFilename" alt="Discussion Image" style="max-width: 300px; max-height: 200px;" /> *@
+            <img src="~/images/@Model.ImageFilename" alt="Discussion Image" style="width: 80%; object-fit: cover;" />
+        </dd>
+        <hr /> 
+    }
+
+   
+    <p><b>@Html.DisplayNameFor(model => model.Content)</b></p>
+    <p>@Html.DisplayFor(model => model.Content)</p>
+    <hr />
+
+    @* <p><b>@Html.DisplayNameFor(model => model.ImageFilename)</b></p> *@
+    @* <p>@Html.DisplayFor(model => model.ImageFilename)</p> *@
+    @* <hr /> *@
+
+
+    <p><b>@Html.DisplayNameFor(model => model.CreateDate)</b></p>
+
+            @* Display relative date (X days ago) *@
+            @if (Model.CreateDate != null)
+            {
+                var daysAgo = (DateTime.Now - Model.CreateDate).Days;
+                @if (daysAgo == 0)
+                {
+                    <span>Today</span>
+                }
+                else if (daysAgo == 1)
+                {
+                    <span>1 day ago</span>
+                }
+                else
+                {
+                    <span>@daysAgo days ago</span>
+                }
+            }
+            else
+            {
+                <span>No date available</span>
+            }
+
+    <hr />
+</div>
+
+<!-- Section for displaying existing comments -->
+<h3>Comments</h3>
+<div>
+    @if (Model.Comment != null && Model.Comment.Count > 0)
+    {
+        @foreach (var comment in Model.Comment)
+        {
+            <div>
+                <p>
+                    <b>NameOfUser</b> <br />
+                    @comment.Content <br />
+                    
+                    @* Display relative date for the comment *@
+                    @if (comment.CreateDate != null)
+                    {
+                        var daysAgo = (DateTime.Now - comment.CreateDate).Days;
+                        @if (daysAgo == 0)
+                        {
+                            <span style="color: #aaa;">Today</span>
+                        }
+                        else if (daysAgo == 1)
+                        {
+                            <span style="color: #aaa;">1 day ago</span>
+                        }
+                        else
+                        {
+                            <span style="color: #aaa;">@daysAgo days ago</span>
+                        }
+                    }
+                    else
+                    {
+                        <span style="color: #aaa;">No date available</span>
+                    }
+                </p>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No comments yet. Be the first to comment!</p>
+    }
+</div>
+
+
+<!-- Link to create a new comment -->
+<div>
+   
+    <a asp-action="CreateComment" class="btn btn-primary" asp-route-discussionId="@Model.DiscussionId"><i class="fa-regular fa-comment"></i>&nbspAdd a Comment</a>
+    <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-house"></i>&nbspBack to List</a>
+
+</div>
