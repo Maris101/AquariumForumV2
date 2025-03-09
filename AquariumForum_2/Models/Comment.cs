@@ -1,4 +1,6 @@
-﻿namespace AquariumForum_2.Models
+﻿using AquariumForum_2.Data;
+
+namespace AquariumForum_2.Models
 {
     public class Comment
     {
@@ -24,6 +26,16 @@
 
         // Navigation property: The discussion related to this comment
         public Discussion? Discussion { get; set; } //Made it nullible
+
+
+
+
+        //Keys for authication
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
 
 
 

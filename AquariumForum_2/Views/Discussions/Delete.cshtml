@@ -22,12 +22,12 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Content)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFilename)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageFilename)
-        </dd>
+        @* <dt class = "col-sm-2"> *@
+        @*     @Html.DisplayNameFor(model => model.ImageFilename) *@
+        @* </dt> *@
+        @* <dd class = "col-sm-10"> *@
+        @*     @Html.DisplayFor(model => model.ImageFilename) *@
+        @* </dd> *@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.CreateDate)
         </dt>
@@ -36,10 +36,19 @@
         </dd>
     </dl>
 
+    <!-- Display current image (if it exists) -->
+            @if (!string.IsNullOrEmpty(Model.ImageFilename))
+            {
+                <div class="form-group">
+                    <label>Current Image</label> <br>
+            <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="Current Image" style="max-height: 300px; object-fit: cover; border-radius: 15px;" />
+                </div>
+            }
+
     <br />
     <form asp-action="Delete">
         <input type="hidden" asp-for="DiscussionId" />
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-danger">
             <i class="fa-solid fa-trash"></i>&nbsp;Delete
         </button>
         <a asp-action="Index" class="btn btn-primary"><i class="fa-solid fa-house"></i>&nbspBack to List</a>

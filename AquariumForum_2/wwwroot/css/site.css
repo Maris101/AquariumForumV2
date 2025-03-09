@@ -1,3 +1,198 @@
+/*Profile*/
+
+/*.thumbnail {
+    width: 100px;
+    height: auto;
+}
+
+.profile-thumbnail {
+    width: 55px;
+    height: auto;
+    border-radius: 50%;
+}*/
+
+
+/* Thumbnail for larger images */
+.thumbnail {
+    width: 100px; /* Fixed width */
+    height: 100px; /* Fixed height */
+    object-fit: cover; /* Crop the image to fit the container */
+    overflow: hidden; /* Hide any part of the image outside the container */
+}
+
+
+.Deletethumbnail {
+    width: 50%; /* Fixed width */
+    height: auto; /* Fixed height */
+    object-fit: cover; /* Crop the image to fit the container */
+    overflow: hidden; /* Hide any part of the image outside the container */
+}
+
+
+/* Profile thumbnail for smaller circular images */
+.profile-thumbnail {
+    width: 55px; /* Fixed width */
+    height: 55px; /* Fixed height */
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Crop the image to fit the circular container */
+    overflow: hidden; /* Hide any part of the image outside the container */
+}
+
+
+/* Profile thumbnail for smaller circular images */
+.profile-thumbnail-large {
+    width: 200px; /* Fixed width */
+    height: 200px; /* Fixed height */
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Crop the image to fit the circular container */
+    overflow: hidden; /* Hide any part of the image outside the container */
+    margin-bottom: 20px; /* Add space below the image */
+    margin-right: 20px;
+}
+
+/* Center the profile content horizontally and vertically */
+.profile-container {
+    display: flex;
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+    margin-bottom: 50px; /* Add space below the image */
+    margin-top: 50px;
+    padding: 20px;
+}
+
+
+
+
+/*displaying the discussions*/
+
+/* Apply masonry grid styling */
+.masonry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns with min 300px width */
+    gap: 20px; /* Space between items */
+    margin-top: 20px;
+}
+
+/* Each grid item */
+.masonry-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Ensure the image doesn't overflow the item */
+}
+
+    /* Ensure the image fills the item's side */
+    .masonry-item .img-container {
+        width: 100%; /* Ensures the container takes up full width */
+        height: 100%; /* Ensures the container takes up full height */
+        position: relative; /* Keeps the image within the bounds of the container */
+    }
+
+    .masonry-item img {
+        width: 100%; /* Make the image take up full width of its container */
+        height: 100%; /* Ensure the image stretches to the full height */
+        object-fit: cover; /* The image will cover the area and be cropped if necessary */
+    }
+
+    /* Content styling (title, text, and metadata) */
+    .masonry-item .content-container {
+        padding: 15px;
+    }
+
+    .masonry-item .title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .masonry-item .content-text {
+        font-size: 1rem;
+        color: #555;
+    }
+
+        .masonry-item .content-text small {
+            color: #888;
+        }
+
+    /* Ensure the image only fills one side of the item */
+    .masonry-item .img-container {
+        height: 250px; /* Fixed height for image (adjust as needed) */
+        width: 100%;
+        overflow: hidden; /* Prevents the image from overflowing */
+    }
+
+
+.title {
+    font-weight: bold; /* Makes the text bold */
+    text-decoration: none; /* Removes the underline */
+}
+
+.author-link {
+    font-weight: bold; /* Makes the text bold */
+    text-decoration: none; /* Removes the underline */
+    color: cornflowerblue; /* Makes the text color black */
+}
+
+/* Adjust the wrapper with padding */
+.content-wrapper {
+    margin-left: 10%; /* Adjust as needed */
+    margin-right: 10%; /* Adjust as needed */
+    margin-bottom: 10%;
+
+}
+
+    /* Make the image fill its container with padding applied */
+.discussion-image {
+    /*width: 100%;*/ /* Set the width to 100% to fill the container */
+    /*height: auto;*/ /* Allow height to adjust automatically based on the aspect ratio */
+    /*object-fit: cover;*/ /* Ensures the image covers the space and avoids distortion */
+    border-radius: 15px; 
+
+    display: block;
+    margin: auto;
+}
+
+
+/* ---------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*--------*/
+.create-date-container {
+    display: flex;
+    align-items: center; /* Align both elements vertically in the center */
+    gap: 8px; /* Adds space between label and date */
+}
+
+.relative-date {
+    font-style: italic; /* Optional: Makes the date text look distinct */
+    color: #555; /* Optional: Lighter color for the relative date */
+    font-weight: normal; /* Optional: To ensure the date text isn't bold */
+}
+
+.m-0 {
+    margin: 0; /* Removes default margin from <p> tag */
+}
+
+
 html {
   font-size: 14px;
 }

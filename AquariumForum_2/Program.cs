@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using AquariumForum_2.Data;
+using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AquariumForum_2Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AquariumForum_2Context") ?? throw new InvalidOperationException("Connection string 'AquariumForum_2Context' not found.")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<AquariumForum_2Context>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -30,6 +33,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
-
+app.MapRazorPages().WithStaticAssets();
 
 app.Run();

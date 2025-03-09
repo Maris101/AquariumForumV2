@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AquariumForum_2.Data;
 
 namespace AquariumForum_2.Models
 {
@@ -31,6 +32,22 @@ namespace AquariumForum_2.Models
 
         // Navigation property: A collection of comments related to this discussion
         public ICollection<Comment>? Comment { get; set; } //Made it nullible
+
+
+
+        //Keys for authication
+
+        // Foreign key (AspNetUsers table)
+        public string ApplicationUserId { get; set; } = string.Empty;
+        // Navigation property
+        public ApplicationUser? ApplicationUser { get; set; } // nullable!!!
+
+
+
+        // Add this property to hold the author's name
+        public string AuthorName { get; set; } = string.Empty; // This is where the author's name will be stored
+
+
 
     }
 }

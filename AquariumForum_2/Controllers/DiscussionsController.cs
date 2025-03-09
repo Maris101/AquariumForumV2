@@ -7,10 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AquariumForum_2.Data;
 using AquariumForum_2.Models;
-using Microsoft.AspNetCore.Hosting;  // Required for IWebHostEnvironment
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;  // Required for IWebHostEnvironment
+
 
 namespace AquariumForum_2.Controllers
 {
+    [Authorize]
     public class DiscussionsController : Controller
     {
         //private readonly AquariumForum_2Context _context;
@@ -22,14 +26,15 @@ namespace AquariumForum_2.Controllers
 
         private readonly AquariumForum_2Context _context;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
         //public DiscussionsController(AquariumForum_2Context context, AquariumForum_2Context webHostEnvironment)
-        public DiscussionsController(AquariumForum_2Context context, IWebHostEnvironment webHostEnvironment)
+        public DiscussionsController(AquariumForum_2Context context, IWebHostEnvironment webHostEnvironment, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _webHostEnvironment = webHostEnvironment;
+            _userManager = userManager;
         }
 
 
@@ -42,7 +47,9 @@ namespace AquariumForum_2.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var userId = _userManager.GetUserId(User);
             var discussions = await _context.Discussion
+                .Where(m => m.ApplicationUser.Id == userId)
                 .Select(d => new Discussion
                 {
                     DiscussionId = d.DiscussionId,
@@ -62,73 +69,111 @@ namespace AquariumForum_2.Controllers
 
 
 
-        // GET: Discussions/Details/5
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    // Fetch the discussion and include comments
+        //    var discussion = await _context.Discussion
+        //        .Include(d => d.Comment)  // Include comments associated with the discussion
+        //        .FirstOrDefaultAsync(d => d.DiscussionId == id);
+
+        //    if (discussion == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+
+        //    // Pass the discussion to the view
+        //    return View(discussion);
+        //}
+
+        //// GET: Discussions/Details
         public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
             {
-                if (id == null)
-                {
-                    return NotFound();
-                }
-
-                // Fetch the discussion and include comments
-                var discussion = await _context.Discussion
-                    .Include(d => d.Comment)  // Include comments associated with the discussion
-                    .FirstOrDefaultAsync(d => d.DiscussionId == id);
-
-                if (discussion == null)
-                {
-                    return NotFound();
-                }
-
-                // Pass the discussion to the view
-                return View(discussion);
+                return NotFound();
             }
 
-            // The "Add Comment" redirect
-            public IActionResult AddComment(int discussionId)
+            // Fetch the discussion along with its comments and the associated user (ApplicationUser)
+            var discussion = await _context.Discussion
+            .Include(d => d.ApplicationUser)  // Include the ApplicationUser for the discussion (author of the discussion)
+            .Include(d => d.Comment)  // Include comments associated with the discussion
+            .ThenInclude(c => c.ApplicationUser)  // Include the ApplicationUser for each comment (author of the comment)
+            .FirstOrDefaultAsync(d => d.DiscussionId == id);
+
+
+
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            // Pass the discussion to the view
+            return View(discussion);
+        }
+
+
+
+        // The "Add Comment" redirect
+        public IActionResult AddComment(int discussionId)
             {
                 return RedirectToAction("Create", "Comments", new { discussionId = discussionId });
             }
-        
-    
 
 
 
-    // POST: Discussions/Details/5/Comment
-    [HttpPost]
+
+
+        // POST: Discussions/Details/5/Comment
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddComment(int discussionId, [Bind("Body")] Comment comment)
         {
+            // Ensure the model is valid before proceeding
             if (ModelState.IsValid)
             {
-                // Find the discussion the comment belongs to
+                // Find the discussion that the comment belongs to
                 var discussion = await _context.Discussion.FindAsync(discussionId);
 
+                // If discussion is found
                 if (discussion != null)
                 {
                     // Associate the comment with the discussion
                     comment.DiscussionId = discussionId;
 
+                    // Set the creation date and user info (if needed)
+                    comment.CreateDate = DateTime.Now;
+                    comment.ApplicationUserId = _userManager.GetUserId(User); // Optionally, associate the user
+
                     // Add the comment to the database
                     _context.Add(comment);
                     await _context.SaveChangesAsync();
+
+                    // Redirect to the discussion's details page after adding the comment
+                    return RedirectToAction(nameof(Details), new { id = discussionId });
                 }
 
-                // Redirect back to the Details page of the discussion with the new comment
-                return RedirectToAction(nameof(Details), new { id = discussionId });
+                // If discussion isn't found, return a NotFound view
+                return NotFound();
             }
 
-            // If the model state is invalid, return to the details page with an error
+            // If the model state is invalid, stay on the details page with the error messages
             return View();
         }
 
 
 
 
-        
 
-            // GET: Discussions/Create
-            public IActionResult Create()
+
+
+        // GET: Discussions/Create
+        public IActionResult Create()
             {
                 return View();
             }
@@ -140,7 +185,7 @@ namespace AquariumForum_2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DiscussionId,Title,Content,ImageFile")] Discussion discussion)
         {
-
+            discussion.ApplicationUserId = _userManager.GetUserId(User);
 
             // Handle image file, but it is optional
             if (discussion.ImageFile != null)
@@ -190,23 +235,41 @@ namespace AquariumForum_2.Controllers
             {
                 return NotFound();
             }
+            //var userId = _userManager.GetUserId(User);
+            //var discussion = await _context.Discussion
+            //     .Where(m => m.ApplicationUserId == userId) // filter by user Id
+            //    .FindAsync(id);
+            //if (discussion == null)
+            //{
+            //    return NotFound();
+            //}
+            //return View(discussion);
 
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion == null)
+            // get the logged in user ID
+            var userId = _userManager.GetUserId(User);
+
+            var photo = await _context.Discussion
+                .Include(m => m.Comment)                      // Include the Tags list   
+                .Where(m => m.ApplicationUserId == userId) // filter by user Id
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+
+            if (photo == null)
             {
                 return NotFound();
             }
-            return View(discussion);
+
+            return View(photo);
         }
 
 
         // POST: Discussions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFile,ImageFilename,CreateDate")] Discussion discussion)
+        public async Task<IActionResult> Edit(int id, [Bind("DiscussionId,Title,Content,ImageFile,ImageFilename,CreateDate,ApplicationUserId")] Discussion discussion)
         {
             if (id != discussion.DiscussionId)
             {
+
                 return NotFound();
             }
 
@@ -266,8 +329,9 @@ namespace AquariumForum_2.Controllers
             {
                 return NotFound();
             }
-
+            var userId = _userManager.GetUserId(User);
             var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == userId) // filter by user Id
                 .FirstOrDefaultAsync(m => m.DiscussionId == id);
             if (discussion == null)
             {
@@ -282,8 +346,18 @@ namespace AquariumForum_2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var discussion = await _context.Discussion.FindAsync(id);
-            if (discussion != null)
+            //var discussion = await _context.Discussion.FindAsync(id);
+
+            var userId = _userManager.GetUserId(User);
+            var discussion = await _context.Discussion
+                .Where(m => m.ApplicationUserId == userId) // filter by user Id
+                .FirstOrDefaultAsync(m => m.DiscussionId == id);
+            if (discussion == null)
+            {
+                return NotFound();
+            }
+
+            else
             {
                 _context.Discussion.Remove(discussion);
             }

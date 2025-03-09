@@ -4,54 +4,45 @@
 
 @model IEnumerable<AquariumForum_2.Models.Discussion>
 
-
 <h1>Discussions</h1>
 
-<p>
-    @* <a asp-action="Create">Create New</a> *@
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Thumbnail</th>
-            <th>@Html.DisplayNameFor(model => model.Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Content)</th>
-            <th>@Html.DisplayNameFor(model => model.CreateDate)</th>
-            <th>Comments</th> <!-- Add this column for comment count -->
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.ImageFilename))
-                    {
-                        <img src="~/images/@item.ImageFilename" alt="@item.Title Thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
-                    }
-                    else
-                    {
+<div class="masonry-grid">
+    @foreach (var item in Model)
+    {
+        <div class="masonry-item">
+            <!-- Image Section -->
+            <div class="img-container">
+                @if (!string.IsNullOrEmpty(item.ImageFilename))
+                {
+                    <img src="~/images/@item.ImageFilename" alt="@item.Title Thumbnail" />
+                }
+                else
+                {
+                    <div class="d-flex justify-content-center align-items-center" style="height: 250px; background-color: #f0f0f0;">
                         <span>No Image</span>
-                    }
-                </td>
-                @* <td><b>@Html.DisplayFor(modelItem => item.Title)</b></td> *@
-                <td>
-                    <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@item.DiscussionId">@item.Title</a>
-                </td>
+                    </div>
+                }
+            </div>
 
-                <td>@Html.Raw(TruncateWords(item.Content, 50))</td>
-                <td>@Html.DisplayFor(modelItem => item.CreateDate)</td>
-                <td>@item.CommentCount</td> <!-- Display the comment count -->
-                <td>
-                    @* <a asp-action="Edit" asp-controller="Home" asp-route-id="@item.DiscussionId">Edit</a> *@
-                    @* <a asp-action="Details" asp-controller="Home" asp-route-id="@item.DiscussionId">Details</a> *@
-                    @* <a asp-action="Delete" asp-controller="Home" asp-route-id="@item.DiscussionId">Delete</a> *@
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+            <!-- Content Section -->
+            <div class="content-container">
+                <a asp-action="GetDiscussion" asp-controller="Home" asp-route-id="@item.DiscussionId" class="title">
+                    @item.Title
+                </a>
+                <br /> <br />
+                <a asp-action="Profile" asp-controller="Home" asp-route-id="@item.ApplicationUserId" class="author-link">
+                    By : @item.AuthorName
+                </a>
+                <p class="content-text">@Html.Raw(TruncateWords(item.Content, 20))</p>
+                <p class="content-text"><small>@Html.DisplayFor(modelItem => item.CreateDate)</small></p>
+                <p class="content-text"><small>@item.CommentCount comments</small></p>
+            </div>
+        </div>
+    }
+</div>
+
+
+
 
 @functions {
     // Helper method to truncate content to a specified word count
@@ -72,5 +63,3 @@
         return truncatedContent;
     }
 }
-
-

@@ -65,16 +65,25 @@
         <form asp-action="Edit" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="DiscussionId" />
+            <input type="hidden" asp-for="ApplicationUserId" />
+            <input type="hidden" asp-for="ImageFilename" />
+
+        
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+
+            <br />
+
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
                 <textarea asp-for="Content" class="form-control"></textarea>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
+
+            <br />  
 
             <!-- Image Upload Section (Optional) -->
             <div class="form-group">
@@ -82,12 +91,13 @@
                 <input type="file" name="ImageFile" class="form-control" />
             </div>
 
+            <br />  <br />
             <!-- Display current image (if it exists) -->
             @if (!string.IsNullOrEmpty(Model.ImageFilename))
             {
                 <div class="form-group">
                     <label>Current Image</label>
-                    <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="Current Image" class="img-fluid" />
+                    <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="Current Image" class="img-fluid" style="max-height: 300px; object-fit: cover; border-radius: 15px;" />
                 </div>
             }
 
