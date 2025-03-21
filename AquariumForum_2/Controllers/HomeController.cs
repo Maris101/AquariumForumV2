@@ -88,25 +88,6 @@ namespace AquariumForum_2.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public async Task<IActionResult> GetDiscussion(int id)
         {
             // Get the discussion along with its comments and the associated user (ApplicationUser)
