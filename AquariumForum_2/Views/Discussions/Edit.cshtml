@@ -96,7 +96,7 @@
             @if (!string.IsNullOrEmpty(Model.ImageFilename))
             {
                 <div class="form-group">
-                    <label>Current Image</label>
+                    <label>Current Image</label><br />
                     <img src="@Url.Content("~/images/" + Model.ImageFilename)" alt="Current Image" class="img-fluid" style="max-height: 300px; object-fit: cover; border-radius: 15px;" />
                 </div>
             }
